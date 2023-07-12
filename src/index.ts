@@ -1,5 +1,8 @@
-import { Application, Container, Loader, Sprite } from 'pixi.js'
+import { Application, Loader} from 'pixi.js'
+import { assets } from './assets';
+import { Scene } from './Scene';
 
+//RENDERIZADO POR PANTALLA CON RESOLUCIÓN DESEADA
 const app = new Application({
 	view: document.getElementById("pixi-canvas") as HTMLCanvasElement,
 	resolution: window.devicePixelRatio || 1,
@@ -9,9 +12,9 @@ const app = new Application({
 	height: 720,
 });
 
-//esto es para que se reescale la pantalla manteniendo la relacion de aspecto
+//RESIZE PARA ACOMODAR LA PANTALLA
 window.addEventListener("resize",()=>{
-	console.log("resized!"); //avisa cuando hay un cambio de escala
+	//console.log("resized!"); avisa cuando hay un cambio de escala en la consola
 	
 //	app.screen.width 640 x
 //	app.screen.height 480 y
@@ -38,39 +41,16 @@ window.addEventListener("resize",()=>{
 	app.view.style.marginTop= marginVertical + "px";
 	app.view.style.marginBottom= marginVertical + "px";
 });
-window.dispatchEvent(new Event("resized"))//con este se fuerza el cambio, pq sino hasta que no se cambie no se centra la imagen
+window.dispatchEvent(new Event("resize"))//con este se fuerza el cambio, pq sino hasta que no se cambie no se centra la imagen
 
+//LOADER QUE CARGA LOS ASSETS DESDE OTRO ARCHIVO
+Loader.shared.add(assets);
 
-
-Loader.shared.add({url:"./Luci.png", name:"myLuci"});
-Loader.shared.add({url:"./hat.png", name:"Hat"});
-
+//CREA UNA ESCENA Y LA MUESTRA EN PANTALLA
 Loader.shared.onComplete.add(()=>{
-const Luz: Sprite = Sprite.from("./Luci.png");//hijo
-Luz.anchor.set(0.5);// 
-Luz.pivot.set(0.5);// esto es para ser el centro creo
-Luz.scale.x =0.2;
-Luz.scale.y =0.2;
-Luz.x =300;
-Luz.y =300;
-//Luz.angle=-45 esto es para que rote
-const hat: Sprite=Sprite.from("./hat.png");
-hat.scale.x =0.1;
-hat.scale.y =0.1;
-hat.x =280;
-hat.y =170;
-//ahora el stage tiene dos hijos: la lusi y el gorro
-//como la luci esta antes que el gorro, este queda adelante de ella
-
-//app.stage.addChild(Luz); esto es para agregarlo de auno
-//app.stage.addChild(hat);
-
-//con esto es para que se mueva todo junto, el gorro y la lusi
-const lucihat: Container = new Container();//padre
-
-lucihat.addChild(Luz);
-lucihat.addChild(hat);
-
-app.stage.addChild(lucihat)
+const myScene= new Scene();
+app.stage.addChild(myScene);
 });
+
+//CARGA LOS ASSETS
 Loader.shared.load();
